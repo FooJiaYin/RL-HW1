@@ -22,6 +22,8 @@ def evalValue(map, value):
                 error += value[i][j] - new_value[i][j]
     return new_value, error
 
+# Main #
+
 for i in range (4) :
     print("Testcase #" + str(i+1))
     map = np.copy(environment.map[i])

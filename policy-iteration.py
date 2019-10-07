@@ -89,6 +89,8 @@ def printDir(prob):
         print(dir+ " ")
         print("-----------------------------------------")
 
+# Main #
+
 for i in range (4) :
     print("Testcase #" + str(i+1))
     map = np.copy(environment.map[i])
