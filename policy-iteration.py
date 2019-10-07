@@ -10,24 +10,16 @@ def initProb(map): # Initialize policy with all equal probability
             if map[i][j] == 0:
                 prob[i][j].fill(0.0)
             else:
-                prob[i][j].fill(0.25)
+                prob[i][j].fill(1.0)
                 if i == 0:              # first row
-                    prob[i][j] = [0.0, 1.0/3, 1.0/3, 1.0/3]
+                    prob[i][j][0] = 0.0
                 if i == map.shape[0]-1: # last row
-                    prob[i][j] = [1.0/3, 0.0, 1.0/3, 1.0/3]
+                    prob[i][j][1] = 0.0
                 if j == 0:              # first col
-                    prob[i][j] = [1.0/3, 1.0/3, 0.0, 1.0/3]
+                    prob[i][j][2] = 0.0
                 if j == map.shape[1]-1: # last col
-                    prob[i][j] = [1.0/3, 1.0/3, 1.0/3, 0.0]
-
-    if map[0][0] != 0:
-        prob[0][0] = [0, 0.5, 0, 0.5]
-    if map[0][map.shape[1]-1] != 0:
-        prob[0][map.shape[1]-1] = [0, 0.5, 0.5, 0]
-    if map[map.shape[0]-1][0] != 0:
-        prob[map.shape[0]-1][0] = [0.5, 0, 0, 0.5]
-    if map[map.shape[0]-1][map.shape[1]-1] != 0:
-        prob[map.shape[0]-1][map.shape[1]-1] = [0.5, 0, 0.5, 0]
+                    prob[i][j][3] = 0.0
+                np.divide(prob[i][j], np.sum(prob[i][j]))
 
     return prob
 
@@ -37,13 +29,13 @@ def evalPolicy(map, value, prob):
     for i in range(map.shape[0]):
         for j in range(map.shape[1]):
             new_value[i][j] = map[i][j]
-            if prob[i][j][0] > 0.000001:
+            if i > 0:
                 new_value[i][j] += prob[i][j][0] * value[i-1][j]
-            if prob[i][j][1] > 0.000001:
+            if i < prob.shape[0]-1:
                 new_value[i][j] += prob[i][j][1] * value[i+1][j]
-            if prob[i][j][2] > 0.000001:
+            if j > 0:
                 new_value[i][j] += prob[i][j][2] * value[i][j-1]
-            if prob[i][j][3] > 0.000001:
+            if j < prob.shape[1]-1:
                 new_value[i][j] += prob[i][j][3] * value[i][j+1]
             error += value[i][j] - new_value[i][j]
             #print(value[i][j], new_value[i][j])
@@ -66,14 +58,10 @@ def improvePolicy(value, prob):
                 if j < prob.shape[1]-1:
                     next_state[3] = value[i][j+1]
                 new_prob[i][j].fill(0)
-                total = 0
                 for k in range (4):
                     if next_state[k] == max(next_state):
                         new_prob[i][j][k] = 1.0
-                        total = total + 1
-                if total == 0:
-                    total = 1
-                new_prob[i][j] = np.divide(new_prob[i][j], total)
+                new_prob[i][j] = np.divide(new_prob[i][j], np.sum(new_prob[i][j]))
     #print(new_prob)
     return new_prob
 
@@ -121,4 +109,3 @@ for i in range (4) :
     print(value)
     printDir(prob)
     print("\n")
-  
