@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import math
 import environment
 
@@ -65,6 +66,29 @@ def improvePolicy(value, prob):
     #print(new_prob)
     return new_prob
 
+def plot(prob, idx):
+    # Source code credit: https://github.com/lance27866854/Small-gridworld
+    # settings
+    ax = plt.gca()
+    ax.set_xlim(0, prob.shape[0])
+    ax.set_ylim(0, prob.shape[1])
+    miloc = plt.MultipleLocator(1)
+    ax.xaxis.set_minor_locator(miloc)
+    ax.yaxis.set_minor_locator(miloc)
+    ax.grid(which='minor')
+
+    # plot policy
+    for i in range (0, prob.shape[0]):
+        for j in range(0, prob.shape[1]):
+            if prob[i][j][0] > 0.1 : plt.arrow(j+0.5, prob.shape[0]-i-0.5, 0, 0.3, width=0.02)
+            if prob[i][j][3] > 0.1 : plt.arrow(j+0.5, prob.shape[0]-i-0.5, 0.3, 0, width=0.02)
+            if prob[i][j][1] > 0.1 : plt.arrow(j+0.5, prob.shape[0]-i-0.5, 0, -0.3, width=0.02)
+            if prob[i][j][2] > 0.1 : plt.arrow(j+0.5, prob.shape[0]-i-0.5, -0.3, 0, width=0.02)
+
+    #plt.show()
+    plt.savefig("result/policy-iteration_"+str(idx+1)+".png")
+    plt.close()
+
 def printDir(prob):
     for i in range(prob.shape[0]):
         dir = ""
@@ -110,4 +134,5 @@ for i in range (4) :
     print("No of iteration: " + str(it))
     print(value)
     printDir(prob)
+    plot(prob, i)
     print("\n")
